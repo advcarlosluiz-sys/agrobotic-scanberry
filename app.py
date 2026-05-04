@@ -209,7 +209,7 @@ def dashboard_produtor():
         'medio': Analise.query.filter_by(usuario_id=user.id, nivel_urgencia='medio').count(),
         'baixo': Analise.query.filter_by(usuario_id=user.id, nivel_urgencia='baixo').count(),
     }
-    return render_template('index.html', recentes=recentes, stats=stats)
+    return render_template('index.html', recentes=recentes, stats=stats, has_api=bool(get_api_key()))
 
 
 @app.route('/analise', methods=['GET'])
