@@ -1,22 +1,15 @@
 """
 Agrobotic ScanBerry — Entry Point para Vercel (Serverless)
-===========================================================
-O Vercel procura por um objeto WSGI chamado 'app' ou 'application' neste arquivo.
+O Vercel requer que 'app', 'application' ou 'handler' estejam
+definidos no nível do módulo (fora de try/except).
 """
 import sys
 import os
 
-# Garante que o diretório raiz está no path para imports relativos
+# Garante que o diretório raiz está no path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-try:
-    from app import app as application
-    # Alias adicional para compatibilidade máxima com o handler do Vercel
-    app = application
-except Exception as e:
-    import traceback
-    print("=" * 60)
-    print("ERRO CRÍTICO NA INICIALIZAÇÃO DO AGROBOTIC SCANBERRY:")
-    print("=" * 60)
-    print(traceback.format_exc())
-    raise e
+from app import app
+
+# Vercel busca por 'app', 'application' ou 'handler' no nível do módulo
+application = app
