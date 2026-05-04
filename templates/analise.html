@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Nova Análise — ScanBerry{% endblock %}
+{% block content %}
+<h1 style="margin-bottom:.5rem">📷 Nova Análise</h1>
+<p style="color:var(--text-muted);margin-bottom:1.5rem">Envie uma foto da lavoura e preencha os dados para análise pela IA.</p>
+
+{% if not has_api %}
+<div class="flash flash-error">⚠️ API não configurada. A análise funcionará em modo demonstração. <a href="{{ url_for('configuracoes') }}">Configurar API</a></div>
+{% endif %}
+
+<form id="analise-form" method="POST" action="{{ url_for('analise_processar') }}" enctype="multipart/form-data">
+    <div class="card" style="margin-bottom:1.5rem">
+        <div class="card-header"><span class="card-icon">📸</span><h3>Imagem da Lavoura</h3></div>
+        <div id="upload-area" class="upload-area">
+            <span class="upload-icon">📷</span>
+            <div class="upload-text">
+                <p><strong>Clique ou arraste uma imagem</strong></p>
+                <p>JPG, PNG, GIF ou WebP — máx. 16MB</p>
+            </div>
+            <div id="preview-container" class="preview-container"></div>
+            <input type="file" id="imagem-input" name="imagem" accept="image/*" capture="environment" style="display:none" required>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem">
+        <div class="card-header"><span class="card-icon">🌿</span><h3>Dados da Lavoura</h3></div>
+        <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1rem">Quanto mais informações, melhor a análise. Campos opcionais.</p>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Parte da planta</label>
+                <select name="parte_planta" class="form-control">
+                    <option value="">Selecione...</option>
+                    <option value="folha">Folha</option><option value="fruto">Fruto</option>
+                    <option value="flor">Flor</option><option value="raiz">Raiz</option>
+                    <option value="solo">Solo / Substrato</option><option value="planta_inteira">Planta inteira</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Tipo de cultivo</label>
+                <select name="tipo_cultivo" class="form-control">
+                    <option value="">Selecione...</option>
+                    <option value="campo_aberto">Campo aberto</option><option value="estufa">Estufa</option>
+                    <option value="tunel_baixo">Túnel baixo</option><option value="semi_hidroponico">Semi-hidropônico</option>
+                    <option value="substrato">Substrato</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group"><label>Variedade cultivada</label><input type="text" name="variedade" class="form-control" placeholder="Ex: Albion, San Andreas..."></div>
+            <div class="form-group"><label>Idade da planta</label><input type="text" name="idade_planta" class="form-control" placeholder="Ex: 3 meses"></div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group"><label>Município / Estado</label><input type="text" name="municipio" class="form-control" placeholder="Ex: Atibaia - SP" value="{% if usuario_logado %}{{ usuario_logado.cidade }}{% if usuario_logado.estado %} - {{ usuario_logado.estado }}{% endif %}{% endif %}"></div>
+            <div class="form-group">
+                <label>Tipo de irrigação</label>
+                <select name="tipo_irrigacao" class="form-control">
+                    <option value="">Selecione...</option>
+                    <option value="gotejamento">Gotejamento</option><option value="aspersao">Aspersão</option>
+                    <option value="sulco">Sulco</option><option value="manual">Manual</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group"><label>Última irrigação</label><input type="date" name="ultima_irrigacao" class="form-control"></div>
+            <div class="form-group"><label>Última adubação</label><input type="date" name="ultima_adubacao" class="form-control"></div>
+        </div>
+
+        <div class="form-group"><label>Sintoma percebido</label><textarea name="sintoma_percebido" class="form-control" placeholder="Descreva o que você observou na planta..."></textarea></div>
+
+        <div class="form-row">
+            <div class="form-group"><label>Tempo do sintoma</label><input type="text" name="tempo_sintoma" class="form-control" placeholder="Ex: 3 dias"></div>
+            <div class="form-group">
+                <label>Problema aumentando?</label>
+                <select name="problema_aumentando" class="form-control">
+                    <option value="">Selecione...</option>
+                    <option value="sim">Sim</option><option value="nao">Não</option><option value="nao_sei">Não sei</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Plantas afetadas</label>
+                <select name="plantas_afetadas" class="form-control">
+                    <option value="">Selecione...</option>
+                    <option value="poucas">Poucas (1-5)</option><option value="varias">Várias (6-20)</option><option value="muitas">Muitas (20+)</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Clima recente</label><input type="text" name="clima_recente" class="form-control" placeholder="Ex: Chuva forte nos últimos dias"></div>
+        </div>
+
+        <div class="form-group"><label>Histórico de doenças/pragas</label><textarea name="historico" class="form-control" placeholder="Mencione problemas anteriores, se houver..."></textarea></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:.5rem">
+        🧠 Analisar com IA
+    </button>
+</form>
+{% endblock %}

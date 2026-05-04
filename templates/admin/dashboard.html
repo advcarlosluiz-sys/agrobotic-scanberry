@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Admin — ScanBerry{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+    <h1>🛡️ Painel Administrativo</h1>
+    <div style="display:flex;gap:.5rem">
+        <a href="{{ url_for('admin_clientes') }}" class="btn btn-secondary btn-sm">👥 Ver Clientes</a>
+        <a href="{{ url_for('configuracoes') }}" class="btn btn-secondary btn-sm">⚙️ Configurações</a>
+        <a href="{{ url_for('admin_exportar_clientes') }}" class="btn btn-secondary btn-sm">📥 Exportar CSV</a>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card"><span class="stat-number" style="color:var(--green-400)">{{ total_usuarios }}</span><span class="stat-label">Clientes Cadastrados</span></div>
+    <div class="stat-card"><span class="stat-number" style="color:var(--green-400)">{{ total_analises }}</span><span class="stat-label">Total de Análises</span></div>
+</div>
+
+<h2 style="margin-top:2rem">👥 Clientes Recentes</h2>
+{% if usuarios_recentes %}
+<div style="overflow-x:auto;margin-top:1rem">
+    <table style="width:100%;border-collapse:collapse">
+        <thead>
+            <tr style="border-bottom:1px solid var(--glass-border)">
+                <th style="text-align:left;padding:.6rem;color:var(--text-muted);font-size:.85rem">Nome</th>
+                <th style="text-align:left;padding:.6rem;color:var(--text-muted);font-size:.85rem">WhatsApp</th>
+                <th style="text-align:left;padding:.6rem;color:var(--text-muted);font-size:.85rem">Cidade</th>
+                <th style="text-align:center;padding:.6rem;color:var(--text-muted);font-size:.85rem">Análises</th>
+                <th style="text-align:left;padding:.6rem;color:var(--text-muted);font-size:.85rem">Cadastro</th>
+                <th style="padding:.6rem"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios_recentes %}
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                <td style="padding:.6rem;font-weight:500">{{ u.nome }}</td>
+                <td style="padding:.6rem;color:var(--green-400)">{{ u.whatsapp }}</td>
+                <td style="padding:.6rem;color:var(--text-muted)">{{ u.cidade }}{% if u.estado %} - {{ u.estado }}{% endif %}</td>
+                <td style="padding:.6rem;text-align:center">{{ u.total_analises }}</td>
+                <td style="padding:.6rem;color:var(--text-muted);font-size:.85rem">{{ u.created_at.strftime('%d/%m/%Y') }}</td>
+                <td style="padding:.6rem"><a href="{{ url_for('admin_cliente_detalhe', id=u.id) }}" class="btn btn-secondary btn-sm">Ver</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state"><span class="empty-icon">👥</span><h3>Nenhum cliente cadastrado</h3></div>
+{% endif %}
+
+{% if analises_recentes %}
+<h2 style="margin-top:2rem">📋 Últimas Análises</h2>
+<div class="historico-grid" style="margin-top:1rem">
+    {% for a in analises_recentes %}
+    <a href="{{ url_for('resultado', id=a.id) }}" class="historico-card card">
+        <div class="card-header">
+            <span class="card-icon">{{ a.categoria|categoria_icone }}</span>
+            <h3 style="font-size:.95rem">{{ a.diagnostico_provavel[:50] }}...</h3>
+        </div>
+        <span class="urgencia-badge urgencia-{{ a.nivel_urgencia }}" style="font-size:.8rem">{{ a.nivel_urgencia|urgencia_icone }} {{ a.nivel_urgencia|upper }}</span>
+        <div class="card-meta">
+            <span>{% if a.usuario %}{{ a.usuario.nome }}{% else %}Anônimo{% endif %}</span>
+            <span>{{ a.created_at.strftime('%d/%m/%Y %H:%M') }}</span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

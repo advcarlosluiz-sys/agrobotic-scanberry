@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Sobre — ScanBerry{% endblock %}
+{% block content %}
+<h1>🍓 Sobre o Agrobotic ScanBerry</h1>
+
+<div class="about-section">
+    <div class="card" style="margin-top:1.5rem">
+        <div class="card-header"><span class="card-icon">🎯</span><h3>O que é?</h3></div>
+        <p>O <strong>Agrobotic ScanBerry</strong> é um assistente agronômico para morangos que utiliza inteligência artificial para analisar imagens da lavoura e fornecer diagnósticos preliminares sobre possíveis problemas de cultivo.</p>
+        <p style="margin-top:.8rem">O sistema auxilia o produtor a identificar sinais visuais de doenças, pragas, deficiências nutricionais, problemas de irrigação, solo e manejo, orientando ações imediatas seguras.</p>
+    </div>
+</div>
+
+<div class="about-section">
+    <div class="card">
+        <div class="card-header"><span class="card-icon">⚠️</span><h3>Limitação Importante</h3></div>
+        <div class="aviso-legal" style="margin-top:0">
+            <p><strong>O Agrobotic ScanBerry oferece uma análise preliminar de apoio ao produtor e NÃO substitui a avaliação de um engenheiro agrônomo.</strong></p>
+            <p style="margin-top:.5rem">O sistema não apresenta diagnósticos definitivos, não prescreve defensivos agrícolas e não substitui orientação técnica profissional.</p>
+        </div>
+    </div>
+</div>
+
+<div class="about-section">
+    <div class="card">
+        <div class="card-header"><span class="card-icon">📥</span><h3>Downloads</h3></div>
+        <div style="display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.5rem">
+            <a href="{{ url_for('download_skill') }}" class="btn btn-secondary">📄 Skill (MD)</a>
+            <a href="{{ url_for('download_relatorio') }}" class="btn btn-secondary">📋 Relatório Completo (PDF)</a>
+        </div>
+    </div>
+</div>
+
+<div class="about-section">
+    <div class="card">
+        <div class="card-header"><span class="card-icon">🔧</span><h3>Tecnologias</h3></div>
+        <ul class="list-items">
+            <li>Python 3.11+ com Flask</li>
+            <li>OpenAI GPT-4o Vision para análise de imagens</li>
+            <li>SQLite / PostgreSQL para armazenamento</li>
+            <li>ReportLab para geração de PDFs</li>
+            <li>Design responsivo para uso no campo</li>
+        </ul>
+    </div>
+</div>
+
+<p style="text-align:center;color:var(--text-muted);margin-top:2rem;font-size:.85rem">
+    Agrobotic ScanBerry v1.0 — © 2026 Agrobotic
+</p>
+{% endblock %}

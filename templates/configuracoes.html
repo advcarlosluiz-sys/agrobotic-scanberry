@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Configurações — ScanBerry{% endblock %}
+{% block content %}
+<h1>⚙️ Configurações</h1>
+<p style="color:var(--text-muted);margin-bottom:1.5rem">Configure sua chave API da OpenAI para ativar a análise por IA.</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:2rem">
+    <!-- Card API -->
+    <div class="card">
+        <div class="card-header"><span class="card-icon">🔑</span><h3>Chave API OpenAI</h3></div>
+        
+        <p style="font-size:.88rem;color:var(--text-muted);margin-bottom:1rem">
+            A chave API é necessária para a análise de imagens via GPT-4o Vision.
+        </p>
+
+        {% if has_key %}
+        <div class="flash flash-success" style="margin-bottom:1rem;font-size:.85rem">
+            ✅ API configurada: <code style="color:var(--green-300)">{{ masked_key }}</code>
+        </div>
+        {% else %}
+        <div class="flash flash-error" style="margin-bottom:1rem;font-size:.85rem">
+            ⚠️ Nenhuma chave API configurada.
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('configuracoes') }}">
+            <div class="form-group">
+                <label>Nova Chave API</label>
+                <input type="password" name="api_key" class="form-control" placeholder="sk-..." autocomplete="off">
+            </div>
+            <div style="display:flex;gap:.8rem">
+                <button type="submit" class="btn btn-primary">💾 Salvar API</button>
+                {% if has_key %}
+                <button type="submit" name="api_key" value="" class="btn btn-danger btn-sm" onclick="return confirm('Remover a chave API?')">🗑️ Remover</button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Card Senha Admin -->
+    <div class="card">
+        <div class="card-header"><span class="card-icon">🛡️</span><h3>Segurança do Admin</h3></div>
+        <p style="font-size:.88rem;color:var(--text-muted);margin-bottom:1rem">
+            Altere a senha de acesso da conta administrativa (**WhatsApp: 0000**).
+        </p>
+
+        <form method="POST" action="{{ url_for('configuracoes') }}">
+            <div class="form-group">
+                <label>Nova Senha</label>
+                <input type="password" name="nova_senha" class="form-control" placeholder="Mínimo 4 caracteres" minlength="4" required>
+            </div>
+            <div class="form-group">
+                <label>Confirmar Nova Senha</label>
+                <input type="password" name="confirma_senha" class="form-control" placeholder="Repita a nova senha" minlength="4" required>
+            </div>
+            <button type="submit" class="btn btn-secondary" style="width:100%;justify-content:center">
+                🔄 Atualizar Senha Admin
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

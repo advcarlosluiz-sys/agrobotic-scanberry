@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ titulo }} — Admin ScanBerry{% endblock %}
+{% block content %}
+<div style="max-width:600px;margin:0 auto">
+    <a href="{{ url_for('admin_clientes') }}" style="color:var(--text-muted);font-size:.88rem">← Voltar</a>
+    <h1 style="margin-top:.8rem;margin-bottom:1.5rem">{{ titulo }}</h1>
+
+    <form method="POST">
+        <div class="card">
+            <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" name="nome" class="form-control" value="{{ cliente.nome if cliente else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>WhatsApp</label>
+                <input type="tel" name="whatsapp" class="form-control" value="{{ cliente.whatsapp if cliente else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" name="email" class="form-control" value="{{ cliente.email if cliente else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Endereço / Propriedade</label>
+                <input type="text" name="endereco" class="form-control" value="{{ cliente.endereco if cliente else '' }}">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Cidade</label>
+                    <input type="text" name="cidade" class="form-control" value="{{ cliente.cidade if cliente else '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select name="estado" class="form-control">
+                        <option value="">UF</option>
+                        {% for uf in ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'] %}
+                        <option value="{{ uf }}" {% if cliente and cliente.estado == uf %}selected{% endif %}>{{ uf }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Senha {% if cliente %}(deixe em branco para não alterar){% else %}* (padrão: 1234 se em branco){% endif %}</label>
+                <input type="password" name="senha" class="form-control" placeholder="{% if cliente %}Manter atual{% else %}Criar senha{% endif %}">
+            </div>
+
+            <div style="display:flex;gap:1rem;margin-top:1.5rem">
+                <button type="submit" class="btn btn-primary btn-lg" style="flex:1;justify-content:center">
+                    ✅ Salvar Cliente
+                </button>
+                <a href="{{ url_for('admin_clientes') }}" class="btn btn-secondary btn-lg" style="flex:1;justify-content:center">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

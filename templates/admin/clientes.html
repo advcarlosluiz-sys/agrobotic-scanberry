@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Clientes — Admin ScanBerry{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem">
+    <h1>👥 Clientes Cadastrados</h1>
+    <div style="display:flex;gap:.5rem">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-sm">← Admin</a>
+        <a href="{{ url_for('admin_cliente_novo') }}" class="btn btn-primary btn-sm">➕ Novo Cliente</a>
+        <a href="{{ url_for('admin_exportar_clientes') }}" class="btn btn-secondary btn-sm">📥 Exportar CSV</a>
+    </div>
+</div>
+
+<form method="GET" action="{{ url_for('admin_clientes') }}" style="margin-bottom:1.5rem">
+    <div style="display:flex;gap:.5rem">
+        <input type="text" name="busca" class="form-control" placeholder="Buscar por nome, WhatsApp ou cidade..." value="{{ busca }}" style="max-width:400px">
+        <button type="submit" class="btn btn-secondary btn-sm">🔍 Buscar</button>
+        {% if busca %}<a href="{{ url_for('admin_clientes') }}" class="btn btn-secondary btn-sm">✕ Limpar</a>{% endif %}
+    </div>
+</form>
+
+{% if clientes.items %}
+<div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse">
+        <thead>
+            <tr style="border-bottom:1px solid var(--glass-border)">
+                <th style="text-align:left;padding:.7rem;color:var(--text-muted);font-size:.85rem">Nome</th>
+                <th style="text-align:left;padding:.7rem;color:var(--text-muted);font-size:.85rem">WhatsApp</th>
+                <th style="text-align:left;padding:.7rem;color:var(--text-muted);font-size:.85rem">E-mail</th>
+                <th style="text-align:left;padding:.7rem;color:var(--text-muted);font-size:.85rem">Cidade/UF</th>
+                <th style="text-align:left;padding:.7rem;color:var(--text-muted);font-size:.85rem">Endereço</th>
+                <th style="text-align:center;padding:.7rem;color:var(--text-muted);font-size:.85rem">Análises</th>
+                <th style="text-align:left;padding:.7rem;color:var(--text-muted);font-size:.85rem">Cadastro</th>
+                <th style="padding:.7rem"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in clientes.items %}
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                <td style="padding:.7rem;font-weight:500">{{ c.nome }}</td>
+                <td style="padding:.7rem;color:var(--green-400)">{{ c.whatsapp }}</td>
+                <td style="padding:.7rem;color:var(--text-muted);font-size:.88rem">{{ c.email or '—' }}</td>
+                <td style="padding:.7rem;color:var(--text-muted)">{{ c.cidade }}{% if c.estado %} - {{ c.estado }}{% endif %}</td>
+                <td style="padding:.7rem;color:var(--text-muted);font-size:.88rem">{{ c.endereco[:30] }}{% if c.endereco|length > 30 %}...{% endif %}</td>
+                <td style="padding:.7rem;text-align:center;font-weight:600;color:var(--green-400)">{{ c.total_analises }}</td>
+                <td style="padding:.7rem;color:var(--text-muted);font-size:.85rem">{{ c.created_at.strftime('%d/%m/%Y') }}</td>
+                <td style="padding:.7rem">
+                    <div style="display:flex;gap:.3rem">
+                        <a href="{{ url_for('admin_cliente_detalhe', id=c.id) }}" class="btn btn-secondary btn-sm">Ver</a>
+                        <a href="{{ url_for('admin_cliente_editar', id=c.id) }}" class="btn btn-secondary btn-sm">📝</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if clientes.pages > 1 %}
+<div class="pagination">
+    {% if clientes.has_prev %}<a href="{{ url_for('admin_clientes', page=clientes.prev_num, busca=busca) }}">← Anterior</a>{% endif %}
+    {% for p in clientes.iter_pages() %}
+        {% if p %}<a href="{{ url_for('admin_clientes', page=p, busca=busca) }}" class="{% if p == clientes.page %}active{% endif %}">{{ p }}</a>
+        {% else %}<span style="color:var(--text-muted)">...</span>{% endif %}
+    {% endfor %}
+    {% if clientes.has_next %}<a href="{{ url_for('admin_clientes', page=clientes.next_num, busca=busca) }}">Próxima →</a>{% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state"><span class="empty-icon">👥</span><h3>{% if busca %}Nenhum resultado para "{{ busca }}"{% else %}Nenhum cliente cadastrado{% endif %}</h3></div>
+{% endif %}
+{% endblock %}

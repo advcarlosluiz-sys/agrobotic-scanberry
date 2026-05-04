@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Cadastro — ScanBerry{% endblock %}
+{% block content %}
+<div style="max-width:500px;margin:0 auto">
+    <h1 style="text-align:center;margin-bottom:.5rem">🍓 Criar Conta</h1>
+    <p style="text-align:center;color:var(--text-muted);margin-bottom:1.5rem">Cadastre-se para usar o ScanBerry</p>
+
+    <form method="POST" action="{{ url_for('cadastro') }}">
+        <div class="card">
+            <div class="card-header"><span class="card-icon">👤</span><h3>Dados Pessoais</h3></div>
+
+            <div class="form-group">
+                <label>Nome completo *</label>
+                <input type="text" name="nome" class="form-control" placeholder="Seu nome" required>
+            </div>
+
+            <div class="form-group">
+                <label>WhatsApp * (usado para login)</label>
+                <input type="tel" name="whatsapp" class="form-control" placeholder="(11) 99999-9999" required>
+            </div>
+
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" name="email" class="form-control" placeholder="seu@email.com">
+            </div>
+
+            <div class="form-group">
+                <label>Endereço / Propriedade</label>
+                <input type="text" name="endereco" class="form-control" placeholder="Nome da fazenda ou endereço">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Cidade</label>
+                    <input type="text" name="cidade" class="form-control" placeholder="Sua cidade">
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select name="estado" class="form-control">
+                        <option value="">UF</option>
+                        <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+                        <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+                        <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+                        <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+                        <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+                        <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+                        <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+                        <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+                        <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Criar Senha * (mín. 4 caracteres)</label>
+                <input type="password" name="senha" class="form-control" placeholder="Sua senha de acesso" minlength="4" required>
+            </div>
+
+            <div class="form-group" style="margin-top:1rem;background:rgba(255,255,255,0.03);padding:1rem;border-radius:8px">
+                <label style="display:flex;align-items:flex-start;gap:.8rem;cursor:pointer;font-weight:400">
+                    <input type="checkbox" name="termos" style="margin-top:3px" required>
+                    <span>Eu li e concordo com os <a href="{{ url_for('termos') }}" target="_blank" style="color:var(--green-400);text-decoration:underline">Termos de Uso e Política de Privacidade</a> (LGPD).</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:1rem">
+                ✅ Criar Conta
+            </button>
+        </div>
+    </form>
+
+    <p style="text-align:center;margin-top:1.2rem;color:var(--text-muted)">
+        Já tem conta? <a href="{{ url_for('login') }}">Fazer login</a>
+    </p>
+</div>
+{% endblock %}

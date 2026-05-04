@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Banco de Dados
+*.db
+instance/
+
+# Uploads e Temporários
+static/uploads/*
+!static/uploads/.gitkeep
+/tmp/
+
+# IDEs
+.vscode/
+.idea/
+
+# Vercel
+.vercel/

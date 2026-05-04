@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Termos de Uso — ScanBerry{% endblock %}
+{% block content %}
+<div class="card" style="max-width:800px;margin:0 auto;padding:2rem">
+    <div class="markdown-content">
+        {{ conteudo|safe }}
+    </div>
+    <div style="margin-top:2rem;text-align:center">
+        <a href="{{ url_for('cadastro') }}" class="btn btn-secondary">Voltar para o Cadastro</a>
+    </div>
+</div>
+
+<style>
+.markdown-content h1 { color: var(--green-400); margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border); padding-bottom: .5rem; }
+.markdown-content h2 { color: var(--green-300); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.3rem; }
+.markdown-content p { line-height: 1.6; margin-bottom: 1rem; color: #e0e0e0; }
+.markdown-content ul { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.markdown-content li { margin-bottom: .5rem; color: #e0e0e0; }
+.markdown-content hr { border: 0; border-top: 1px solid var(--glass-border); margin: 2rem 0; }
+</style>
+{% endblock %}

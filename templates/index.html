@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Agrobotic ScanBerry — Assistente Agronômico{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="hero-emoji">🍓</span>
+    <h1>Agrobotic ScanBerry</h1>
+    <p>Assistente agronômico para morangos. Envie fotos da sua lavoura e receba uma análise preliminar com inteligência artificial.</p>
+    <div style="display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap">
+        <a href="{{ url_for('analise_form') }}" class="btn btn-primary btn-lg">📷 Nova Análise</a>
+        <a href="{{ url_for('historico') }}" class="btn btn-secondary btn-lg">📋 Ver Histórico</a>
+    </div>
+    {% if not has_api %}
+    <p style="margin-top:1.2rem;font-size:.85rem;color:var(--red-400)">⚠️ API não configurada — <a href="{{ url_for('configuracoes') }}">Configure sua chave OpenAI</a></p>
+    {% endif %}
+</section>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-number" style="color:var(--green-400)">{{ stats.total }}</span>
+        <span class="stat-label">Total de Análises</span>
+    </div>
+    <div class="stat-card verde">
+        <span class="stat-number">{{ stats.baixo }}</span>
+        <span class="stat-label">🟢 Baixo</span>
+    </div>
+    <div class="stat-card amarelo">
+        <span class="stat-number">{{ stats.medio }}</span>
+        <span class="stat-label">🟡 Médio</span>
+    </div>
+    <div class="stat-card laranja">
+        <span class="stat-number">{{ stats.alto }}</span>
+        <span class="stat-label">🟠 Alto</span>
+    </div>
+    <div class="stat-card vermelho">
+        <span class="stat-number">{{ stats.critico }}</span>
+        <span class="stat-label">🔴 Crítico</span>
+    </div>
+</div>
+
+<div class="features-grid">
+    <div class="card feature-card"><span class="card-icon">📷</span><h3>Análise de Imagens</h3><p>Envie fotos de folhas, frutos, flores, solo e receba diagnóstico preliminar via IA.</p></div>
+    <div class="card feature-card"><span class="card-icon">🧠</span><h3>IA Especialista</h3><p>GPT-4o Vision analisa com olhar técnico de agrônomo especialista em morangos.</p></div>
+    <div class="card feature-card"><span class="card-icon">🚨</span><h3>Classificação de Urgência</h3><p>Cada análise recebe nível de urgência: baixo, médio, alto ou crítico.</p></div>
+    <div class="card feature-card"><span class="card-icon">📄</span><h3>Relatórios PDF</h3><p>Baixe relatórios profissionais de cada análise para compartilhar com agrônomos.</p></div>
+</div>
+
+{% if recentes %}
+<h2 style="margin-top:2rem">Análises Recentes</h2>
+<div class="historico-grid">
+    {% for a in recentes %}
+    <a href="{{ url_for('resultado', id=a.id) }}" class="historico-card card">
+        <div class="card-header">
+            <span class="card-icon">{{ a.categoria|categoria_icone }}</span>
+            <h3 style="font-size:1rem">{{ a.diagnostico_provavel[:60] }}{% if a.diagnostico_provavel|length > 60 %}...{% endif %}</h3>
+        </div>
+        <span class="urgencia-badge urgencia-{{ a.nivel_urgencia }}">{{ a.nivel_urgencia|urgencia_icone }} {{ a.nivel_urgencia|upper }}</span>
+        <div class="card-meta">
+            <span>{{ a.categoria|categoria_nome }}</span>
+            <span>{{ a.created_at.strftime('%d/%m/%Y %H:%M') }}</span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="margin-top:2rem">
+    <span class="empty-icon">🌱</span>
+    <h3>Nenhuma análise realizada</h3>
+    <p>Comece enviando uma foto da sua lavoura de morango.</p>
+</div>
+{% endif %}
+{% endblock %}

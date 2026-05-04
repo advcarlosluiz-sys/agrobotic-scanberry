@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Resultado — ScanBerry{% endblock %}
+{% block content %}
+<div class="resultado-header">
+    <h1>{{ resposta.get('diagnostico_provavel', 'Análise') }}</h1>
+    <span class="urgencia-badge urgencia-{{ analise.nivel_urgencia }}">
+        {{ analise.nivel_urgencia|urgencia_icone }} {{ analise.nivel_urgencia|upper }}
+    </span>
+</div>
+
+<div class="actions-bar">
+    <a href="{{ url_for('download_pdf', id=analise.id) }}" class="btn btn-primary btn-sm">📄 Baixar PDF</a>
+    <a href="{{ url_for('analise_form') }}" class="btn btn-secondary btn-sm">📷 Nova Análise</a>
+    <a href="{{ url_for('historico') }}" class="btn btn-secondary btn-sm">📋 Histórico</a>
+</div>
+
+{% if analise.imagem_path %}
+<img src="{{ url_for('static', filename='uploads/' + analise.imagem_path) }}" alt="Imagem analisada" class="result-image">
+{% endif %}
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+    <div class="card" style="text-align:center">
+        <span style="font-size:1.8rem">{{ analise.categoria|categoria_icone }}</span>
+        <p style="font-weight:600;margin-top:.3rem">{{ analise.categoria|categoria_nome }}</p>
+        <p style="font-size:.8rem;color:var(--text-muted)">Categoria</p>
+    </div>
+    <div class="card" style="text-align:center">
+        <span style="font-size:1.8rem">{{ analise.nivel_urgencia|urgencia_icone }}</span>
+        <p style="font-weight:600;margin-top:.3rem">{{ analise.nivel_urgencia|capitalize }}</p>
+        <p style="font-size:.8rem;color:var(--text-muted)">Urgência</p>
+    </div>
+    <div class="card" style="text-align:center">
+        <span style="font-size:1.8rem;font-family:Outfit;font-weight:800;color:var(--green-400)">{{ (resposta.get('confianca', 0) * 100)|int }}%</span>
+        <div class="confianca-bar"><div class="confianca-fill" style="width:{{ (resposta.get('confianca', 0) * 100)|int }}%"></div></div>
+        <p style="font-size:.8rem;color:var(--text-muted);margin-top:.3rem">Confiança</p>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:1rem;background:rgba(45,106,79,0.1);border-color:var(--green-700)">
+    <div class="card-header"><span class="card-icon">💬</span><h3>Mensagem ao Produtor</h3></div>
+    <p style="font-size:1rem;line-height:1.7">{{ resposta.get('mensagem_para_produtor', '') }}</p>
+</div>
+
+{% if resposta.get('sintomas_observados') %}
+<div class="card" style="margin-bottom:1rem">
+    <h3 class="section-title">🔍 Sintomas Observados</h3>
+    <ul class="list-items">{% for s in resposta.sintomas_observados %}<li>{{ s }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+{% if resposta.get('possiveis_causas') %}
+<div class="card" style="margin-bottom:1rem">
+    <h3 class="section-title">🧪 Possíveis Causas</h3>
+    <ul class="list-items">{% for c in resposta.possiveis_causas %}<li>{{ c }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+{% if resposta.get('acoes_imediatas_seguras') %}
+<div class="card" style="margin-bottom:1rem">
+    <h3 class="section-title">✅ Ações Imediatas Seguras</h3>
+    <ul class="list-items">{% for a in resposta.acoes_imediatas_seguras %}<li>{{ a }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+{% if resposta.get('perguntas_complementares') %}
+<div class="card" style="margin-bottom:1rem">
+    <h3 class="section-title">❓ Perguntas Complementares</h3>
+    <ul class="list-items">{% for p in resposta.perguntas_complementares %}<li>{{ p }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+{% if resposta.get('fotos_adicionais_recomendadas') %}
+<div class="card" style="margin-bottom:1rem">
+    <h3 class="section-title">📷 Fotos Adicionais Recomendadas</h3>
+    <ul class="list-items">{% for f in resposta.fotos_adicionais_recomendadas %}<li>{{ f }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+{% if resposta.get('quando_chamar_agronomo') %}
+<div class="card" style="margin-bottom:1rem">
+    <h3 class="section-title">👨‍🌾 Quando Chamar o Agrônomo</h3>
+    <p>{{ resposta.quando_chamar_agronomo }}</p>
+</div>
+{% endif %}
+
+<div class="aviso-legal">
+    <p><strong>⚠️ {{ resposta.get('aviso_obrigatorio', 'Esta análise é preliminar e não substitui a avaliação de um engenheiro agrônomo.') }}</strong></p>
+    {% if resposta.get('alerta_legal') %}<p style="margin-top:.5rem">{{ resposta.alerta_legal }}</p>{% endif %}
+</div>
+{% endblock %}

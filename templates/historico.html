@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Histórico — ScanBerry{% endblock %}
+{% block content %}
+<h1>📋 Histórico de Análises</h1>
+<p style="color:var(--text-muted);margin-bottom:1rem">Todas as análises realizadas no ScanBerry.</p>
+
+<div class="filters">
+    <a href="{{ url_for('historico') }}" class="filter-btn {% if not filtro %}active{% endif %}">Todos</a>
+    <a href="{{ url_for('historico', filtro='baixo') }}" class="filter-btn {% if filtro=='baixo' %}active{% endif %}">🟢 Baixo</a>
+    <a href="{{ url_for('historico', filtro='medio') }}" class="filter-btn {% if filtro=='medio' %}active{% endif %}">🟡 Médio</a>
+    <a href="{{ url_for('historico', filtro='alto') }}" class="filter-btn {% if filtro=='alto' %}active{% endif %}">🟠 Alto</a>
+    <a href="{{ url_for('historico', filtro='critico') }}" class="filter-btn {% if filtro=='critico' %}active{% endif %}">🔴 Crítico</a>
+    <a href="{{ url_for('historico', filtro='doenca') }}" class="filter-btn {% if filtro=='doenca' %}active{% endif %}">🦠 Doença</a>
+    <a href="{{ url_for('historico', filtro='praga') }}" class="filter-btn {% if filtro=='praga' %}active{% endif %}">🐛 Praga</a>
+    <a href="{{ url_for('historico', filtro='nutricao') }}" class="filter-btn {% if filtro=='nutricao' %}active{% endif %}">🧪 Nutrição</a>
+</div>
+
+{% if analises.items %}
+<div class="historico-grid">
+    {% for a in analises.items %}
+    <a href="{{ url_for('resultado', id=a.id) }}" class="historico-card card">
+        <div class="card-header">
+            <span class="card-icon">{{ a.categoria|categoria_icone }}</span>
+            <h3 style="font-size:.95rem">{{ a.diagnostico_provavel[:55] }}{% if a.diagnostico_provavel|length > 55 %}...{% endif %}</h3>
+        </div>
+        <span class="urgencia-badge urgencia-{{ a.nivel_urgencia }}" style="font-size:.82rem">{{ a.nivel_urgencia|urgencia_icone }} {{ a.nivel_urgencia|upper }}</span>
+        <div class="card-meta">
+            <span>{{ a.categoria|categoria_nome }}</span>
+            {% if usuario_logado and usuario_logado.is_admin and a.usuario %}
+            <span style="color:var(--green-400)">👤 {{ a.usuario.nome.split()[0] }}</span>
+            {% endif %}
+            <span>{{ a.created_at.strftime('%d/%m/%Y') }}</span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+{% if analises.pages > 1 %}
+<div class="pagination">
+    {% if analises.has_prev %}<a href="{{ url_for('historico', page=analises.prev_num, filtro=filtro) }}">← Anterior</a>{% endif %}
+    {% for p in analises.iter_pages() %}
+        {% if p %}<a href="{{ url_for('historico', page=p, filtro=filtro) }}" class="{% if p == analises.page %}active{% endif %}">{{ p }}</a>
+        {% else %}<span style="color:var(--text-muted)">...</span>{% endif %}
+    {% endfor %}
+    {% if analises.has_next %}<a href="{{ url_for('historico', page=analises.next_num, filtro=filtro) }}">Próxima →</a>{% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">🌱</span>
+    <h3>Nenhuma análise encontrada</h3>
+    <p>{% if filtro %}Nenhum resultado para este filtro.{% else %}Comece fazendo sua primeira análise.{% endif %}</p>
+    <a href="{{ url_for('analise_form') }}" class="btn btn-primary" style="margin-top:1rem">📷 Nova Análise</a>
+</div>
+{% endif %}
+{% endblock %}

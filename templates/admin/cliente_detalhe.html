@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ cliente.nome }} — Admin ScanBerry{% endblock %}
+{% block content %}
+<a href="{{ url_for('admin_clientes') }}" style="color:var(--text-muted);font-size:.88rem">← Voltar aos clientes</a>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:.8rem">
+    <h1>👤 {{ cliente.nome }}</h1>
+    <div style="display:flex;gap:.5rem">
+        <a href="{{ url_for('admin_cliente_editar', id=cliente.id) }}" class="btn btn-secondary btn-sm">📝 Editar Cadastro</a>
+        <form action="{{ url_for('admin_cliente_excluir', id=cliente.id) }}" method="POST" style="display:inline" onsubmit="return confirm('ATENÇÃO: Isso excluirá o cliente e todas as análises dele. Deseja continuar?')">
+            <button type="submit" class="btn btn-secondary btn-sm" style="color:var(--red-400)">🗑️ Excluir Cliente</button>
+        </form>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem">
+    <div class="card">
+        <div class="card-header"><span class="card-icon">📋</span><h3>Dados do Cliente</h3></div>
+        <table style="width:100%">
+            <tr><td style="padding:.5rem;color:var(--text-muted);width:40%">Nome</td><td style="padding:.5rem;font-weight:500">{{ cliente.nome }}</td></tr>
+            <tr><td style="padding:.5rem;color:var(--text-muted)">WhatsApp</td><td style="padding:.5rem;color:var(--green-400)">{{ cliente.whatsapp }}</td></tr>
+            <tr><td style="padding:.5rem;color:var(--text-muted)">E-mail</td><td style="padding:.5rem">{{ cliente.email or '—' }}</td></tr>
+            <tr><td style="padding:.5rem;color:var(--text-muted)">Endereço</td><td style="padding:.5rem">{{ cliente.endereco or '—' }}</td></tr>
+            <tr><td style="padding:.5rem;color:var(--text-muted)">Cidade/UF</td><td style="padding:.5rem">{{ cliente.cidade }}{% if cliente.estado %} - {{ cliente.estado }}{% endif %}</td></tr>
+            <tr><td style="padding:.5rem;color:var(--text-muted)">Cadastro</td><td style="padding:.5rem">{{ cliente.created_at.strftime('%d/%m/%Y %H:%M') }}</td></tr>
+            <tr><td style="padding:.5rem;color:var(--text-muted)">Último login</td><td style="padding:.5rem">{{ cliente.last_login.strftime('%d/%m/%Y %H:%M') if cliente.last_login else 'Nunca' }}</td></tr>
+        </table>
+    </div>
+
+    <div class="card" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <span style="font-size:3rem;font-family:Outfit;font-weight:800;color:var(--green-400)">{{ analises|length }}</span>
+        <span style="color:var(--text-muted)">Análises Realizadas</span>
+        {% if cliente.whatsapp %}
+        <a href="https://wa.me/55{{ cliente.whatsapp|replace('(', '')|replace(')', '')|replace('-', '')|replace(' ', '') }}" target="_blank" class="btn btn-primary btn-sm" style="margin-top:1rem">💬 WhatsApp</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if analises %}
+<h2 style="margin-top:2rem">📋 Análises do Cliente</h2>
+<div class="historico-grid" style="margin-top:1rem">
+    {% for a in analises %}
+    <a href="{{ url_for('resultado', id=a.id) }}" class="historico-card card">
+        <div class="card-header">
+            <span class="card-icon">{{ a.categoria|categoria_icone }}</span>
+            <h3 style="font-size:.95rem">{{ a.diagnostico_provavel[:50] }}{% if a.diagnostico_provavel|length > 50 %}...{% endif %}</h3>
+        </div>
+        <span class="urgencia-badge urgencia-{{ a.nivel_urgencia }}" style="font-size:.8rem">{{ a.nivel_urgencia|urgencia_icone }} {{ a.nivel_urgencia|upper }}</span>
+        <div class="card-meta">
+            <span>{{ a.categoria|categoria_nome }}</span>
+            <span>{{ a.created_at.strftime('%d/%m/%Y %H:%M') }}</span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="margin-top:2rem"><span class="empty-icon">🌱</span><h3>Nenhuma análise realizada</h3></div>
+{% endif %}
+{% endblock %}
