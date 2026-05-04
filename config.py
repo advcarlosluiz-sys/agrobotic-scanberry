@@ -40,5 +40,9 @@ class Config:
     
     @staticmethod
     def init_app(app):
-        """Inicializa diretórios necessários."""
-        os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
+        """Inicializa diretórios necessários com segurança."""
+        try:
+            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        except:
+            # Em ambientes como Vercel, pastas fora de /tmp são read-only
+            pass
