@@ -289,23 +289,20 @@ def analise_processar():
         
         # Salvar no banco
         user = get_usuario_logado()
-        if not user:
-            flash('Sessão expirada. Faça login novamente.', 'error')
-            return redirect(url_for('login'))
-            
+        
         analise = Analise(
-        usuario_id=user.id if user else None,
-        imagem_path=nome_arquivo,
-        imagem_nome=secure_filename(arquivo.filename),
-        diagnostico_provavel=resposta.get('diagnostico_provavel', ''),
-        categoria=resposta.get('categoria', 'desconhecido'),
-        nivel_urgencia=resposta.get('nivel_de_urgencia', 'baixo'),
-        confianca=resposta.get('confianca', 0.0),
-        parte_afetada=resposta.get('parte_afetada', 'desconhecido'),
-    )
-    analise.set_dados_lavoura(dados_lavoura)
-    analise.set_resposta_ia(resposta)
-    
+            usuario_id=user.id if user else None,
+            imagem_path=nome_arquivo,
+            imagem_nome=secure_filename(arquivo.filename),
+            diagnostico_provavel=resposta.get('diagnostico_provavel', ''),
+            categoria=resposta.get('categoria', 'desconhecido'),
+            nivel_urgencia=resposta.get('nivel_de_urgencia', 'baixo'),
+            confianca=resposta.get('confianca', 0.0),
+            parte_afetada=resposta.get('parte_afetada', 'desconhecido'),
+        )
+        analise.set_dados_lavoura(dados_lavoura)
+        analise.set_resposta_ia(resposta)
+        
         db.session.add(analise)
         db.session.commit()
         

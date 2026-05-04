@@ -20,6 +20,7 @@ class Config:
         SQLALCHEMY_DATABASE_URI = _db_url or 'sqlite:///scanberry.db'
         
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
     
     # OpenAI
     OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
