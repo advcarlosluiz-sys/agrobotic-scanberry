@@ -62,14 +62,17 @@ def get_api_key():
 
 
 def get_usuario_logado():
-    """Retorna o usuário logado ou None se não existir no banco."""
-    uid = session.get('usuario_id')
-    if uid:
-        user = Usuario.query.get(uid)
-        if not user:
-            # Limpa sessão órfã se o usuário foi deletado do banco
-            session.pop('usuario_id', None)
-        return user
+    """Retorna o usuário logado de forma segura."""
+    try:
+        uid = session.get('usuario_id')
+        if uid:
+            user = Usuario.query.get(uid)
+            if not user:
+                session.pop('usuario_id', None)
+                return None
+            return user
+    except:
+        return None
     return None
 
 
@@ -98,8 +101,11 @@ def admin_required(f):
 
 @app.context_processor
 def inject_user():
-    """Injeta usuário logado em todos os templates."""
-    return dict(usuario_logado=get_usuario_logado())
+    """Injeta usuário logado com segurança."""
+    try:
+        return dict(usuario_logado=get_usuario_logado())
+    except:
+        return dict(usuario_logado=None)
 
 
 # ── ROTAS DE AUTENTICAÇÃO ────────────────────────────────
