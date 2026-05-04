@@ -1,14 +1,11 @@
-flask==3.1.0
+flask==3.0.3
 flask-sqlalchemy==3.1.1
-werkzeug==3.1.3
-sqlalchemy==2.0.40
+werkzeug==3.0.3
+sqlalchemy==2.0.36
 python-dotenv==1.0.1
-openai==1.82.0
-reportlab==4.4.0
-Pillow==11.2.1
-gunicorn==23.0.0
-markdown==3.7
-blinker==1.9.0
-# psycopg2-binary é necessário apenas se usar PostgreSQL externo (Neon, Supabase, etc.)
-# Descomente a linha abaixo se configurar DATABASE_URL ou POSTGRES_URL no Vercel:
-# psycopg2-binary==2.9.10
+openai==1.35.0
+reportlab==4.2.5
+Pillow==10.4.0
+gunicorn==22.0.0
+markdown==3.6
+blinker==1.8.2
