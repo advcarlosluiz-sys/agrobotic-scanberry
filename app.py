@@ -50,10 +50,15 @@ def allowed_file(filename):
 
 
 def get_api_key():
-    """Obtém a API key: primeiro do banco, depois do ambiente."""
+    """Obtém a API key: tenta banco (várias chaves) e depois ambiente."""
     with app.app_context():
-        db_key = Configuracao.get_valor('openai_api_key', '')
-    return db_key or app.config.get('OPENAI_API_KEY', '')
+        # Tenta variações comuns no banco
+        db_key = Configuracao.get_valor('openai_api_key') or \
+                 Configuracao.get_valor('OPENAI_API_KEY') or \
+                 Configuracao.get_valor('api_key')
+        
+    # Se não houver no banco, usa a do sistema (Vercel Env Vars)
+    return db_key or os.environ.get('OPENAI_API_KEY') or app.config.get('OPENAI_API_KEY', '')
 
 
 def get_usuario_logado():
