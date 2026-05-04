@@ -26,19 +26,23 @@ Config.init_app(app)
 db.init_app(app)
 
 with app.app_context():
-    db.create_all()
-    # Criar admin padrão se não existir
-    if not Usuario.query.filter_by(is_admin=True).first():
-        admin = Usuario(
-            nome='Administrador', 
-            whatsapp='0000', 
-            is_admin=True,
-            aceitou_termos=True,
-            data_consentimento=datetime.utcnow()
-        )
-        admin.set_senha('admin123')
-        db.session.add(admin)
-        db.session.commit()
+    try:
+        db.create_all()
+        # Criar admin padrão se não existir
+        if not Usuario.query.filter_by(is_admin=True).first():
+            admin = Usuario(
+                nome='Administrador', 
+                whatsapp='0000', 
+                is_admin=True,
+                aceitou_termos=True,
+                data_consentimento=datetime.utcnow()
+            )
+            admin.set_senha('admin123')
+            db.session.add(admin)
+            db.session.commit()
+    except Exception as e:
+        print(f"Erro ao inicializar banco: {e}")
+
 
 
 def allowed_file(filename):
@@ -256,11 +260,17 @@ def analise_processar():
     # Analisar via IA
     api_key = get_api_key()
     modelo = app.config.get('OPENAI_MODEL', 'gpt-4o-mini')
-    resposta = analisar_imagem(caminho, dados_lavoura, api_key, modelo)
     
-    # Salvar no banco
-    user = get_usuario_logado()
-    analise = Analise(
+    try:
+        resposta = analisar_imagem(caminho, dados_lavoura, api_key, modelo)
+        
+        # Salvar no banco
+        user = get_usuario_logado()
+        if not user:
+            flash('Sessão expirada. Faça login novamente.', 'error')
+            return redirect(url_for('login'))
+            
+        analise = Analise(
         usuario_id=user.id if user else None,
         imagem_path=nome_arquivo,
         imagem_nome=secure_filename(arquivo.filename),
@@ -273,10 +283,14 @@ def analise_processar():
     analise.set_dados_lavoura(dados_lavoura)
     analise.set_resposta_ia(resposta)
     
-    db.session.add(analise)
-    db.session.commit()
-    
-    return redirect(url_for('resultado', id=analise.id))
+        db.session.add(analise)
+        db.session.commit()
+        
+        return redirect(url_for('resultado', id=analise.id))
+    except Exception as e:
+        print(f"Erro na análise: {e}")
+        flash(f'Erro técnico na análise: {str(e)}', 'error')
+        return redirect(url_for('analise_form'))
 
 
 @app.route('/resultado/<int:id>')
