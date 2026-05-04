@@ -25,23 +25,35 @@ app.config.from_object(Config)
 Config.init_app(app)
 db.init_app(app)
 
-with app.app_context():
-    try:
-        db.create_all()
-        # Criar admin padrão se não existir
-        if not Usuario.query.filter_by(is_admin=True).first():
-            admin = Usuario(
-                nome='Administrador', 
-                whatsapp='0000', 
-                is_admin=True,
-                aceitou_termos=True,
-                data_consentimento=datetime.utcnow()
-            )
-            admin.set_senha('admin123')
-            db.session.add(admin)
-            db.session.commit()
-    except Exception as e:
-        print(f"Erro ao inicializar banco: {e}")
+# Alias para o Vercel encontrar o handler com certeza
+application = app
+
+def init_db():
+    """Inicialização segura do banco de dados em ambiente serverless."""
+    with app.app_context():
+        try:
+            db.create_all()
+            # Criar admin padrão se não existir
+            if not Usuario.query.filter_by(is_admin=True).first():
+                admin = Usuario(
+                    nome='Administrador', 
+                    whatsapp='0000', 
+                    is_admin=True,
+                    aceitou_termos=True,
+                    data_consentimento=datetime.utcnow()
+                )
+                admin.set_senha('admin123')
+                db.session.add(admin)
+                db.session.commit()
+        except Exception as e:
+            print(f"Aviso: Banco não inicializado agora (será tentado na primeira requisição): {e}")
+
+# Executa uma única vez na primeira requisição
+@app.before_request
+def setup():
+    if not getattr(app, '_db_initialized', False):
+        init_db()
+        app._db_initialized = True
 
 
 
@@ -595,6 +607,17 @@ def categoria_icone(valor):
     return {'doenca':'🦠','praga':'🐛','nutricao':'🧪','manejo':'🔧',
             'irrigacao':'💧','solo':'🌍','colheita':'🍓','desconhecido':'❓'}.get(valor, '❓')
 
+
+@app.errorhandler(500)
+def internal_error(error):
+    """Retorna o erro detalhado para facilitar o debug na nuvem."""
+    import traceback
+    err_msg = traceback.format_exc()
+    return f"<h1>Erro 500 - Detalhes Técnicos</h1><pre>{err_msg}</pre>", 500
+
+@app.route('/health')
+def health():
+    return "OK", 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
