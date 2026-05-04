@@ -14,7 +14,11 @@ class Config:
     if _db_url and _db_url.startswith("postgres://"):
         _db_url = _db_url.replace("postgres://", "postgresql://", 1)
         
-    SQLALCHEMY_DATABASE_URI = _db_url or 'sqlite:///scanberry.db'
+    if os.environ.get('VERCEL') and not _db_url:
+        SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/scanberry.db'
+    else:
+        SQLALCHEMY_DATABASE_URI = _db_url or 'sqlite:///scanberry.db'
+        
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # OpenAI
