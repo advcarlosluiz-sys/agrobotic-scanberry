@@ -65,9 +65,12 @@
                     <li><a href="{{ url_for('analise_form') }}" style="color:var(--text-muted)">Nova Análise</a></li>
                     <li><a href="{{ url_for('historico') }}" style="color:var(--text-muted)">Histórico</a></li>
                     <li><a href="{{ url_for('sobre') }}" style="color:var(--text-muted)">Sobre o Projeto</a></li>
+                    {% if usuario_logado and usuario_logado.is_admin %}
                     <li><a href="{{ url_for('configuracoes') }}" style="color:var(--text-muted)">Configurações</a></li>
+                    {% endif %}
                 </ul>
             </div>
+
             <div>
                 <h4 style="margin-bottom:1rem">Suporte Técnico</h4>
                 <p style="color:var(--text-muted);font-size:.9rem">Dúvidas ou sugestões? Nossa equipe entrará em contato para auxílio técnico.</p>

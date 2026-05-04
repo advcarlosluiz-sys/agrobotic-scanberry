@@ -13,7 +13,20 @@ instance/
 # Uploads e Temporários
 static/uploads/*
 !static/uploads/.gitkeep
+static/reports/*
+!static/reports/.gitkeep
 /tmp/
+
+# Imagens de teste na raiz do projeto
+*.PNG
+*.JPG
+foto*.png
+foto*.jpg
+foto*.PNG
+foto*.JPG
+
+# Relatórios PDF gerados
+Relatorio_Completo_*.pdf
 
 # IDEs
 .vscode/
