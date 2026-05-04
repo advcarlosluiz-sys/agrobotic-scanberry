@@ -130,6 +130,7 @@ def cadastro():
         db.session.add(user)
         db.session.commit()
         
+        session.permanent = True
         session['usuario_id'] = user.id
         flash(f'Bem-vindo(a), {user.nome}! Cadastro realizado.', 'success')
         return redirect(url_for('index'))
@@ -146,6 +147,7 @@ def login():
         
         user = Usuario.query.filter_by(whatsapp=whatsapp).first()
         if user and user.verificar_senha(senha) and user.ativo:
+            session.permanent = True
             session['usuario_id'] = user.id
             user.last_login = datetime.utcnow()
             db.session.commit()
