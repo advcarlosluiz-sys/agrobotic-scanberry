@@ -56,8 +56,13 @@ def setup():
             init_db()
             app._db_initialized = True
         except Exception as e:
-            print(f"ERRO CRÍTICO NO SETUP: {e}")
-            # Não trava o app, tenta seguir
+            # Em ambiente serverless, falhas de DB no cold start podem ocorrer
+            print(f"Aviso de Setup: {e}")
+            pass
+
+@app.route('/ping')
+def ping():
+    return 'pong'
 
 
 
