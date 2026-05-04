@@ -52,8 +52,12 @@ def init_db():
 @app.before_request
 def setup():
     if not getattr(app, '_db_initialized', False):
-        init_db()
-        app._db_initialized = True
+        try:
+            init_db()
+            app._db_initialized = True
+        except Exception as e:
+            print(f"ERRO CRÍTICO NO SETUP: {e}")
+            # Não trava o app, tenta seguir
 
 
 

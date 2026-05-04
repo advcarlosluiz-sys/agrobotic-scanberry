@@ -14,7 +14,10 @@ class Config:
     if _db_url and _db_url.startswith("postgres://"):
         _db_url = _db_url.replace("postgres://", "postgresql://", 1)
         
-    if os.environ.get('VERCEL') and not _db_url:
+    # Detecção robusta de Vercel
+    IS_VERCEL = os.environ.get('VERCEL') == '1' or '.vercel.app' in os.environ.get('VERCEL_URL', '')
+    
+    if IS_VERCEL and not _db_url:
         SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/scanberry.db'
     else:
         SQLALCHEMY_DATABASE_URI = _db_url or 'sqlite:///scanberry.db'
